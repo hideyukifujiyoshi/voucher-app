@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Voucher Uber — Mercado Livre</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d0d;
+    --surface: #181818;
+    --border: #272727;
+    --text: #f2f2f2;
+    --muted: #777;
+    --input-bg: #111;
+    --vermelha: #e63946;
+    --preta: #cccccc;
+    --amarela: #FFE600;
+    --verde: #00C878;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 48px 16px 80px;
+  }
+
+  /* LOGO */
+  .ml-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 32px;
+  }
+  .ml-logo-text {
+    font-family: "DM Sans", sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+  .ml-logo-text span { color: var(--muted); font-weight: 400; font-size: 14px; }
+
+  /* HOME */
+  .home { width: 100%; max-width: 540px; }
+  .home-title { font-weight: 800; font-size: clamp(22px,5vw,30px); text-align: center; margin-bottom: 8px; }
+  .home-sub { color: var(--muted); text-align: center; font-size: 14px; margin-bottom: 36px; }
+
+  .esteiras-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+
+  .esteira-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 16px 20px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .esteira-card:hover { border-color: var(--cor); transform: translateY(-2px); box-shadow: 0 10px 36px rgba(0,0,0,0.45); }
+  .esteira-stripe { position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--cor); }
+  .esteira-label { font-weight: 800; font-size: 15px; color: var(--text); margin-bottom: 5px; margin-top: 4px; }
+  .esteira-label-color { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--cor); margin-right: 6px; vertical-align: middle; }
+  .esteira-count { font-size: 12px; color: var(--muted); }
+
+  .admin-trigger {
+    width: 100%; padding: 13px; background: none; border: 1px solid var(--border);
+    border-radius: 12px; color: var(--muted); font-family: 'DM Sans', sans-serif;
+    font-size: 13px; cursor: pointer; transition: all 0.18s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .admin-trigger:hover { border-color: #444; color: var(--text); }
+
+  /* FORM */
+  .form-page { width: 100%; max-width: 500px; display: none; }
+  .back-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--muted); font-size: 13px; cursor: pointer;
+    background: none; border: none; font-family: 'DM Sans', sans-serif;
+    margin-bottom: 28px; transition: color 0.15s;
+  }
+  .back-btn:hover { color: var(--text); }
+
+  .esteira-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 5px 14px 5px 10px; border-radius: 100px;
+    border: 1px solid var(--border); background: var(--surface);
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; margin-bottom: 14px;
+  }
+  .badge-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--cor); }
+  .form-title { font-size: 24px; font-weight: 800; margin-bottom: 6px; }
+  .form-subtitle { color: var(--muted); font-size: 13px; margin-bottom: 32px; }
+  .form-section { margin-bottom: 22px; }
+  .section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+  .fields-row { display: grid; gap: 10px; }
+  .fields-row.two { grid-template-columns: 1fr 1fr; }
+  .fields-row.three { grid-template-columns: 2fr 1fr 1.4fr; }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  label { font-size: 11px; color: var(--muted); font-weight: 500; }
+  input {
+    background: var(--input-bg); border: 1.5px solid var(--border);
+    border-radius: 10px; padding: 12px 13px; color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-size: 14px;
+    transition: border-color 0.15s; width: 100%;
+    text-transform: uppercase;
+  }
+  input[type="tel"], input[type="number"] { text-transform: none; }
+  input:focus { outline: none; border-color: var(--cor); }
+  input::placeholder { color: #383838; text-transform: none; }
+
+  .submit-btn {
+    width: 100%; padding: 14px; background: var(--cor); border: none;
+    border-radius: 12px; color: #000; font-family: 'DM Sans', sans-serif;
+    font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 10px;
+    transition: opacity 0.18s, transform 0.1s;
+  }
+  .submit-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  /* SUCCESS */
+  .success-page { display: none; flex-direction: column; align-items: center; text-align: center; max-width: 380px; }
+  .success-icon { width: 72px; height: 72px; border-radius: 50%; background: var(--cor); display: flex; align-items: center; justify-content: center; font-size: 32px; margin-bottom: 24px; }
+  .success-title { font-size: 26px; font-weight: 800; margin-bottom: 10px; }
+  .success-sub { color: var(--muted); font-size: 14px; line-height: 1.7; margin-bottom: 32px; }
+  .new-btn { padding: 12px 28px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .new-btn:hover { border-color: var(--cor); }
+
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); z-index: 100; align-items: center; justify-content: center; }
+  .modal-overlay.show { display: flex; }
+  .modal-box { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 36px 32px; width: 100%; max-width: 340px; text-align: center; }
+  .modal-icon { font-size: 32px; margin-bottom: 16px; }
+  .modal-title { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+  .modal-sub { color: var(--muted); font-size: 13px; margin-bottom: 24px; }
+  .modal-input { width: 100%; padding: 13px; background: var(--input-bg); border: 1.5px solid var(--border); border-radius: 10px; color: var(--text); font-size: 20px; text-align: center; letter-spacing: 0.3em; font-family: 'DM Sans', sans-serif; margin-bottom: 10px; }
+  .modal-input:focus { outline: none; border-color: var(--amarela); }
+  .modal-err { color: var(--vermelha); font-size: 12px; margin-bottom: 12px; min-height: 16px; }
+  .modal-btns { display: flex; gap: 10px; }
+  .modal-cancel { flex: 1; padding: 12px; background: none; border: 1px solid var(--border); border-radius: 10px; color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; }
+  .modal-cancel:hover { border-color: #444; color: var(--text); }
+  .modal-confirm { flex: 1; padding: 12px; background: var(--amarela); border: none; border-radius: 10px; color: #000; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 800; cursor: pointer; }
+  .modal-confirm:hover { opacity: 0.85; }
+
+  /* ADMIN */
+  .admin-page { width: 100%; max-width: 960px; display: none; }
+  .admin-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
+  .admin-title { font-size: 22px; font-weight: 800; }
+  .admin-sub { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .tab-bar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+  .tab { padding: 7px 16px; border-radius: 100px; border: 1.5px solid var(--border); background: none; color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.15s; letter-spacing: 0.06em; text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
+  .tab .tab-dot { width: 7px; height: 7px; border-radius: 50%; }
+  .tab.active, .tab:hover { color: var(--text); border-color: var(--cor-tab); }
+  .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+  .table-empty { padding: 48px; text-align: center; color: var(--muted); font-size: 14px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: #111; padding: 11px 16px; text-align: left; font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--border); }
+  td { padding: 11px 16px; border-bottom: 1px solid #1c1c1c; vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  .esteira-pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 100px; font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; background: rgba(255,255,255,0.06); }
+  .pill-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .dl-btn { padding: 9px 18px; border-radius: 9px; border: 1.5px solid var(--border); background: var(--surface); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .dl-btn:hover { border-color: var(--cor); color: var(--cor); }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px); background: #1e1e1e; border: 1px solid var(--border); border-radius: 100px; padding: 11px 22px; font-size: 13px; color: var(--text); font-family: 'DM Sans', sans-serif; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); z-index: 999; white-space: nowrap; }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 480px) {
+    .fields-row.two { grid-template-columns: 1fr; }
+    .fields-row.three { grid-template-columns: 1fr 1fr; }
+    .admin-header { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div class="home" id="homePage">
+  <div class="ml-logo">
+    <div class="ml-logo-text">mercado livre <span>/ voucher uber</span></div>
+  </div>
+  <h1 class="home-title">Selecione sua esteira</h1>
+  <p class="home-sub">Preencha seus dados para solicitar o transporte</p>
+  <div class="esteiras-grid">
+    <div class="esteira-card" style="--cor:var(--vermelha)" onclick="openForm('vermelha')">
+      <div class="esteira-stripe"></div>
+      <div class="esteira-label"><span class="esteira-label-color" style="background:var(--vermelha)"></span>Esteira Vermelha</div>
+      <div class="esteira-count" id="count-vermelha">carregando...</div>
+    </div>
+    <div class="esteira-card" style="--cor:var(--preta)" onclick="openForm('preta')">
+      <div class="esteira-stripe"></div>
+      <div class="esteira-label"><span class="esteira-label-color" style="background:var(--preta)"></span>Esteira Preta</div>
+      <div class="esteira-count" id="count-preta">carregando...</div>
+    </div>
+    <div class="esteira-card" style="--cor:var(--amarela)" onclick="openForm('amarela')">
+      <div class="esteira-stripe"></div>
+      <div class="esteira-label"><span class="esteira-label-color" style="background:var(--amarela)"></span>Esteira Amarela</div>
+      <div class="esteira-count" id="count-amarela">carregando...</div>
+    </div>
+    <div class="esteira-card" style="--cor:var(--verde)" onclick="openForm('verde')">
+      <div class="esteira-stripe"></div>
+      <div class="esteira-label"><span class="esteira-label-color" style="background:var(--verde)"></span>Esteira Verde</div>
+      <div class="esteira-count" id="count-verde">carregando...</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FORM PAGE -->
+<div class="form-page" id="formPage">
+  <button class="back-btn" onclick="goHome()">← Voltar</button>
+
+  <div class="esteira-badge" id="formBadge">
+    <div class="badge-dot" id="badgeDot"></div>
+    <span id="formBadgeLabel">Esteira</span>
+  </div>
+  <h2 class="form-title">Seus dados de transporte</h2>
+  <p class="form-subtitle">Preencha corretamente para receber o voucher Uber</p>
+
+  <div class="form-section">
+    <div class="section-label">Identificação</div>
+    <div class="fields-row two">
+      <div class="field"><label>Nome *</label><input type="text" id="f_nome" placeholder="JOÃO" autocomplete="off"></div>
+      <div class="field"><label>Sobrenome *</label><input type="text" id="f_sobrenome" placeholder="SILVA" autocomplete="off"></div>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <div class="section-label">Contato</div>
+    <div class="fields-row">
+      <div class="field">
+        <label>Telefone (somente números) *</label>
+        <input type="tel" id="f_telefone" placeholder="19991234567" maxlength="11" inputmode="numeric">
+      </div>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <div class="section-label">Endereço de embarque</div>
+    <div class="fields-row" style="margin-bottom:10px">
+      <div class="field"><label>Rua / Logradouro *</label><input type="text" id="f_rua" placeholder="RUA DAS FLORES" autocomplete="off"></div>
+    </div>
+    <div class="fields-row three" style="margin-bottom:10px">
+      <div class="field"><label>Bairro *</label><input type="text" id="f_bairro" placeholder="CENTRO" autocomplete="off"></div>
+      <div class="field"><label>Número *</label><input type="tel" id="f_numero" placeholder="123" maxlength="6" inputmode="numeric"></div>
+      <div class="field"><label>CEP *</label><input type="tel" id="f_cep" placeholder="13053000" maxlength="8" inputmode="numeric"></div>
+    </div>
+    <div class="fields-row">
+      <div class="field"><label>Cidade *</label><input type="text" id="f_cidade" placeholder="CAMPINAS" autocomplete="off"></div>
+    </div>
+  </div>
+  <button class="submit-btn" id="submitBtn" onclick="submitForm()">Enviar dados →</button>
+</div>
+
+<!-- SUCCESS -->
+<div class="success-page" id="successPage">
+  <div class="success-icon" id="successIcon">✓</div>
+  <h2 class="success-title">Dados enviados!</h2>
+  <p class="success-sub">Seu endereço foi registrado com sucesso.<br>Aguarde o voucher Uber no seu celular.</p>
+  <button class="new-btn" onclick="goHome()">← Voltar ao início</button>
+</div>
+
+
+
+
+
+<div class="toast" id="toast"></div>
+
+<script>
+const WEBHOOK_URL = 'https://api.mercadolibre.com/workspace/genai/verdi-flows/webhook/458b0ce5-5dd6-42d5-ad04-e1a0fba8663b/external';
+const WEBHOOK_AUTH = 'Basic ' + btoa('voucher:esteiras');
+
+
+const COLORS = { vermelha:'#e63946', preta:'#cccccc', amarela:'#FFE600', verde:'#00C878' };
+const LABELS = { vermelha:'Esteira Vermelha', preta:'Esteira Preta', amarela:'Esteira Amarela', verde:'Esteira Verde' };
+const DESTINO = { end:"Rod. Adauto Campo Dall'Orto, 1 - Nova Veneza", cidade:'Sumaré', estado:'SP', cep:'13178440', lat:'-22.8603', lng:'-47.2198' };
+const EMB_LAT='-22.8700', EMB_LNG='-47.2100';
+
+let currentEsteira = null;
+let sheetRows = [];
+
+// ── INPUT HANDLERS ───────────────────────────────────────────────────────
+function setupInputs() {
+  // Uppercase for text fields
+  ['f_nome','f_sobrenome','f_rua','f_bairro','f_cidade'].forEach(id => {
+    const el = document.getElementById(id);
+    el.addEventListener('input', () => {
+      const pos = el.selectionStart;
+      el.value = el.value.toUpperCase();
+      el.setSelectionRange(pos, pos);
+    });
+  });
+  // Only digits for numeric fields
+  ['f_telefone','f_numero','f_cep'].forEach(id => {
+    const el = document.getElementById(id);
+    el.addEventListener('input', () => {
+      el.value = el.value.replace(/\D/g, '');
+    });
+    el.addEventListener('keypress', e => {
+      if (!/\d/.test(e.key)) e.preventDefault();
+    });
+    el.addEventListener('paste', e => {
+      e.preventDefault();
+      const text = (e.clipboardData || window.clipboardData).getData('text');
+      el.value = text.replace(/\D/g, '');
+    });
+  });
+}
+
+// ── WEBHOOK ───────────────────────────────────────────────────────────────
+async function sendToWebhook(payload) {
+  const resp = await fetch(WEBHOOK_URL, {
+    method: 'POST',
+    headers: {
+      'Authorization': WEBHOOK_AUTH,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  });
+  return resp.ok;
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────
+// Contadores em memória (resetam ao recarregar — dados reais ficam no Sheets)
+const _counts = { vermelha:0, preta:0, amarela:0, verde:0 };
+
+function incLocalCount(esteira) {
+  _counts[esteira] = (_counts[esteira]||0) + 1;
+}
+
+function initCounts() {
+  ['vermelha','preta','amarela','verde'].forEach(e => {
+    document.getElementById('count-'+e).textContent = '0 respostas';
+  });
+}
+
+// ── NAVIGATION ────────────────────────────────────────────────────────────
+function showPage(id) {
+  ['homePage','formPage','successPage'].forEach(p => {
+    document.getElementById(p).style.display='none';
+  });
+  const el = document.getElementById(id);
+  if (id==='successPage') { el.style.display='flex'; el.style.flexDirection='column'; el.style.alignItems='center'; }
+  else el.style.display='block';
+  window.scrollTo(0,0);
+}
+
+function goHome() { showPage('homePage'); initCounts(); }
+
+function openForm(esteira) {
+  currentEsteira = esteira;
+  const cor = COLORS[esteira];
+  document.getElementById('formPage').style.setProperty('--cor', cor);
+  document.getElementById('badgeDot').style.background = cor;
+  document.getElementById('formBadgeLabel').textContent = LABELS[esteira];
+  document.getElementById('submitBtn').style.background = cor;
+  document.getElementById('submitBtn').style.color = esteira==='amarela'?'#000':'#fff';
+  ['f_nome','f_sobrenome','f_telefone','f_rua','f_bairro','f_numero','f_cep','f_cidade'].forEach(id=>document.getElementById(id).value='');
+  showPage('formPage');
+}
+
+async function submitForm() {
+  const f = {
+    esteira: currentEsteira,
+    nome: document.getElementById('f_nome').value.trim(),
+    sobrenome: document.getElementById('f_sobrenome').value.trim(),
+    telefone: document.getElementById('f_telefone').value.replace(/\D/g,''),
+    rua: document.getElementById('f_rua').value.trim(),
+    bairro: document.getElementById('f_bairro').value.trim(),
+    numero: document.getElementById('f_numero').value.replace(/\D/g,''),
+    cep: document.getElementById('f_cep').value.replace(/\D/g,''),
+    cidade: document.getElementById('f_cidade').value.trim(),
+  };
+  if (!f.nome||!f.sobrenome||!f.telefone||!f.rua||!f.cidade||!f.cep) { showToast('⚠ Preencha todos os campos obrigatórios'); return; }
+  if (f.telefone.length < 10) { showToast('⚠ Telefone inválido — mínimo 10 dígitos'); return; }
+  if (f.cep.length !== 8) { showToast('⚠ CEP deve ter 8 dígitos'); return; }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled=true; btn.textContent='Enviando...';
+  try {
+    const ok = await sendToWebhook(f);
+    if (ok) {
+      incLocalCount(currentEsteira);
+      document.getElementById('successPage').style.setProperty('--cor', COLORS[currentEsteira]);
+      document.getElementById('successIcon').style.background = COLORS[currentEsteira];
+      showPage('successPage');
+    } else { showToast('❌ Erro ao salvar. Tente novamente.'); }
+  } catch { showToast('❌ Erro de conexão. Tente novamente.'); }
+  btn.disabled=false; btn.textContent='Enviar dados →';
+}
+
+// ── ADMIN ─────────────────────────────────────────────────────────────────
+
+
+
+
+
+
+
+
+
+// ── CSV ───────────────────────────────────────────────────────────────────
+
+
+
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ── START ─────────────────────────────────────────────────────────────────
+setupInputs();
+showPage('homePage');
+initCounts();
+</script>
+</body>
+</html>
